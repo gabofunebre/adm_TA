@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  db:
+    container_name: db_mov-dinero
+    image: postgres:14
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "6432:5432"
+    networks:
+      - movdin_net
+  web:
+    container_name: app_mov-dinero
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - movdin_net
+      - nginx_net
+networks:
+  movdin_net:
+  nginx_net:
+    external: true
+volumes:
+  postgres_data:
