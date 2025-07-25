@@ -1,15 +1,17 @@
 services:
   db:
+    container_name: db_mov-dinero
     image: postgres:17
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: movdb
+    env_file:
+      - .env
     volumes:
-      - /srv/dev-disk-by-uuid-1735d6ab-2a75-4dc4-91a9-b81bb3fda73d/Servicios/MovimientosDinero/postgres_data/postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "6432:5432"
+    networks:
+      - movdin_net
   web:
+    container_name: app_mov-dinero
     build: .
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
@@ -18,10 +20,11 @@ services:
       - .env
     depends_on:
       - db
-
     networks:
+      - movdin_net
       - nginx_net
 networks:
+  movdin_net:
   nginx_net:
     external: true
 volumes:
