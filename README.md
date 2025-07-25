@@ -13,3 +13,4 @@ Backend en FastAPI para registrar movimientos entre cuentas.
    docker-compose up --build -d
    ```
 3. Expón la aplicación a través de tu proxy (red `nginx_net`).
+
