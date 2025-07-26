@@ -1,13 +1,52 @@
-# Helper Makefile for development
+# Helper Makefile para desarrollo y automatización
 
+# -----------------------------
+# Variables
+# -----------------------------
 CONTAINER ?= app_mov-dinero
 DB_CONTAINER ?= db_mov-dinero
 
-# Run a command inside the main container
-run:
-	docker exec -it $(CONTAINER) $(filter-out $@,$(MAKECMDGOALS))
+# -----------------------------
+# Ayuda
+# -----------------------------
+help:
+	@echo "Makefile - Comandos disponibles:"
+	@echo ""
+	@echo "Contenedores:"
+	@echo "  make up              - Levanta los contenedores con build"
+	@echo "  make down            - Detiene y elimina los contenedores"
+	@echo "  make down-v          - Idem down, pero elimina también los volúmenes"
+	@echo "  make restart         - Reinicia el contenedor principal"
+	@echo "  make start           - Inicia el contenedor principal si está detenido"
+	@echo "  make stop            - Detiene el contenedor principal"
+	@echo "  make ps              - Lista contenedores activos"
+	@echo ""
+	@echo "Logs y shell:"
+	@echo "  make logs            - Muestra logs de todos los contenedores"
+	@echo "  make logs-db         - Muestra logs del contenedor de base de datos"
+	@echo "  make shell           - Abre una shell bash en el contenedor principal"
+	@echo ""
+	@echo "Frontend (React):"
+	@echo "  make build-frontend  - Ejecuta npm install y compila el frontend (Vite)"
+	@echo ""
+	@echo "Rebuild:"
+	@echo "  make rebuild         - Baja y vuelve a levantar solo los contenedores"
+	@echo "  make rebuild-v       - Idem rebuild, eliminando también volúmenes"
+	@echo "  make rebuild-all     - Rebuild completo: containers + frontend"
+	@echo "  make rebuild-all-v   - Idem rebuild-all, pero elimina también volúmenes"
+	@echo ""
+	@echo "Git:"
+	@echo "  make push MSG='msg'  - Hace commit y push con mensaje"
+	@echo "  make pull            - Hace pull desde main"
+	@echo ""
+	@echo "Utilidades:"
+	@echo "  make prune           - Limpia recursos docker sin usar"
+	@echo "  make run comando     - Ejecuta un comando dentro del contenedor principal"
+	@echo ""
 
-# Basic commands
+# -----------------------------
+# Contenedores
+# -----------------------------
 up:
 	docker compose up --build -d
 
@@ -16,28 +55,6 @@ down:
 
 down-v:
 	docker compose down -v
-
-logs:
-	docker compose logs -f || true
-
-logs-db:
-	docker logs -f $(DB_CONTAINER) || true
-
-shell:
-	docker exec -it $(CONTAINER) /bin/bash
-
-prune:
-	docker system prune
-
-# Build frontend (React)
-build-frontend:
-	cd frontend && npm install && npm run build
-
-# Rebuild containers and frontend
-rebuild:
-	make down
-	make build-frontend
-	make up
 
 start:
 	docker start $(CONTAINER)
@@ -51,6 +68,48 @@ restart:
 ps:
 	docker ps
 
+# -----------------------------
+# Logs y shell
+# -----------------------------
+logs:
+	docker compose logs -f || true
+
+logs-db:
+	docker logs -f $(DB_CONTAINER) || true
+
+shell:
+	docker exec -it $(CONTAINER) /bin/bash
+
+# -----------------------------
+# Frontend
+# -----------------------------
+build-frontend:
+	cd frontend && npm install && npm run build
+
+# -----------------------------
+# Rebuild
+# -----------------------------
+rebuild:
+	make down
+	make up
+
+rebuild-v:
+	make down-v
+	make up
+
+rebuild-all:
+	make down
+	make build-frontend
+	make up
+
+rebuild-all-v:
+	make down-v
+	make build-frontend
+	make up
+
+# -----------------------------
+# Git
+# -----------------------------
 push:
 	git add .
 	git commit -m "$(word 2, $(MAKECMDGOALS))"
@@ -59,6 +118,18 @@ push:
 pull:
 	git pull origin main
 
-# Allow targets with arguments at the end
+# -----------------------------
+# Utilidades
+# -----------------------------
+prune:
+	docker system prune
+
+# -----------------------------
+# Ejecutar comando dentro del contenedor
+# -----------------------------
+run:
+	docker exec -it $(CONTAINER) $(filter-out $@,$(MAKECMDGOALS))
+
+# Permite targets con argumentos
 %:
 	@:

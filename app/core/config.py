@@ -1,5 +1,6 @@
 from functools import lru_cache
 from pydantic_settings import BaseSettings
+from pydantic import Extra
 
 class Settings(BaseSettings):
     DATABASE_URL: str
@@ -18,7 +19,9 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = '.env'
+        extra = Extra.ignore  # Ignora variables como DB_PATH que no se usan acá
 
 @lru_cache()
 def get_settings():
     return Settings()
+
