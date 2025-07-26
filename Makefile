@@ -29,8 +29,14 @@ shell:
 prune:
 	docker system prune
 
+# Build frontend (React)
+build-frontend:
+	cd frontend && npm install && npm run build
+
+# Rebuild containers and frontend
 rebuild:
 	make down
+	make build-frontend
 	make up
 
 start:
