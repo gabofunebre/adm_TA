@@ -1,8 +1,13 @@
 .login-container {
-  min-height: 100vh;
+  max-width: 420px;
+  width: 100%;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
 
 .logo {
-  width: 150px;
-  margin-top: 1rem;
+  width: 200px;
+  margin-top: 1.5rem;
 }
