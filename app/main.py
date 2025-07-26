@@ -1,8 +1,9 @@
 from fastapi import FastAPI
-
+from fastapi.staticfiles import StaticFiles
 from app.api.routers import auth, users, accounts, movements, dashboard
 from app.database import Base, engine
 from app.services.logging_middleware import LoggingMiddleware
+from pathlib import Path
 
 Base.metadata.create_all(bind=engine)
 
@@ -11,11 +12,11 @@ app = FastAPI(title="Movimientos de Dinero")
 app.add_middleware(LoggingMiddleware)
 
 
-@app.get("/")
-def read_root():
-    """Basic index route for health checks."""
-    return {"message": "Welcome to Movimientos de Dinero API"}
-
+app.mount(
+    "/",
+    StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "dist", html=True),
+    name="frontend"
+)
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(accounts.router)
