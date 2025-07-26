@@ -5,3 +5,7 @@ __pycache__/
 
 # Node
 node_modules
+
+
+#Archivos extra
+deploy_fastapi_react_produccion.pdf
