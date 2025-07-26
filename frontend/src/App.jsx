@@ -18,7 +18,7 @@ function App() {
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-start min-vh-100 bg-light">
+    <div className="d-flex flex-column justify-content-start align-items-center min-vh-100 pt-5">
       <div className="login-container d-flex flex-column align-items-center mt-5">
         <div className="text-end w-100 mb-3">
           <a href="#">Registrarse</a>
