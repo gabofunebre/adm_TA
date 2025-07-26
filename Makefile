@@ -27,12 +27,13 @@ help:
 	@echo "  make shell           - Abre una shell bash en el contenedor principal"
 	@echo ""
 	@echo "Frontend (React):"
-	@echo "  make build-frontend  - Ejecuta npm install y compila el frontend (Vite)"
+	@echo "  make build-frontend  - Compila el frontend con Vite"
+	@echo "  make install-frontend - Ejecuta npm install + build"
 	@echo ""
 	@echo "Rebuild:"
-	@echo "  make rebuild         - Baja y vuelve a levantar solo los contenedores"
+	@echo "  make rebuild         - Baja y vuelve a levantar los contenedores"
 	@echo "  make rebuild-v       - Idem rebuild, eliminando también volúmenes"
-	@echo "  make rebuild-all     - Rebuild completo: containers + frontend"
+	@echo "  make rebuild-all     - Rebuild completo: contenedores + frontend"
 	@echo "  make rebuild-all-v   - Idem rebuild-all, pero elimina también volúmenes"
 	@echo ""
 	@echo "Git:"
@@ -83,9 +84,9 @@ shell:
 # -----------------------------
 # Frontend
 # -----------------------------
-build-ftd:
-	cd frontend&& npm run build
-	
+build-frontend:
+	cd frontend && npm run build
+
 install-frontend:
 	cd frontend && npm install && npm run build
 
@@ -117,7 +118,7 @@ push:
 	git add .
 	git commit -m "$(word 2, $(MAKECMDGOALS))"
 	git push
-
+	
 pull:
 	git pull origin main
 
@@ -133,6 +134,8 @@ prune:
 run:
 	docker exec -it $(CONTAINER) $(filter-out $@,$(MAKECMDGOALS))
 
-# Permite targets con argumentos
+# -----------------------------
+# Target wildcard (ignora targets no declarados)
+# -----------------------------
 %:
 	@:
