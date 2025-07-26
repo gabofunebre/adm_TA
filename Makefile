@@ -83,7 +83,10 @@ shell:
 # -----------------------------
 # Frontend
 # -----------------------------
-build-frontend:
+build-ftd:
+	cd frontend&& npm run build
+	
+install-frontend:
 	cd frontend && npm install && npm run build
 
 # -----------------------------
