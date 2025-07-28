@@ -8,6 +8,7 @@ class Registration(Base):
     email = Column(String, unique=True, nullable=False)
     admin_token = Column(String, unique=True, nullable=False)
     user_token = Column(String, unique=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
     approved = Column(Boolean, default=False)
     rejected = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
