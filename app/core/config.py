@@ -11,8 +11,13 @@ class Settings(BaseSettings):
     postgres_port: int
     admin_username: str
     admin_password: str
+    admin_email: str
     google_client_id: str
     google_client_secret: str
+    mailer_token: str
+    mailer_url: str
+    mailer_from: str = 'no-reply@gabo.ar'
+    base_url: str
 
     JWT_ALGORITHM: str = 'HS256'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
