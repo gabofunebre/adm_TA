@@ -24,8 +24,11 @@ services:
     networks:
       - movdin_net
       - nginx_net
+      - mailer_net
 networks:
   movdin_net:
   nginx_net:
+    external: true
+  mailer_net:
     external: true
 
