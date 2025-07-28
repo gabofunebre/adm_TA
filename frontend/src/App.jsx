@@ -37,7 +37,7 @@ function App() {
     }
     setMessage('')
     try {
-      const res = await fetch('/registrations', {
+      const res = await fetch('/registrations/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ first_name: firstName, last_name: lastName, email, password: regPassword })
