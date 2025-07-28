@@ -11,6 +11,8 @@ function App() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [regPassword, setRegPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [message, setMessage] = useState('')
 
   const handleSubmit = (e) => {
@@ -25,8 +27,12 @@ function App() {
 
   const handleRegister = async (e) => {
     e.preventDefault()
-    if (!firstName || !lastName || !email) {
+    if (!firstName || !lastName || !email || !regPassword || !confirmPassword) {
       setMessage('Completa todos los campos')
+      return
+    }
+    if (regPassword !== confirmPassword) {
+      setMessage('Las contraseñas no coinciden')
       return
     }
     setMessage('')
@@ -34,15 +40,15 @@ function App() {
       const res = await fetch('/registrations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ first_name: firstName, last_name: lastName, email })
+        body: JSON.stringify({ first_name: firstName, last_name: lastName, email, password: regPassword })
       })
       if (res.ok) {
         setMessage('Registro enviado')
-        setFirstName(''); setLastName(''); setEmail('')
+        setFirstName(''); setLastName(''); setEmail(''); setRegPassword(''); setConfirmPassword('')
       } else {
         setMessage('Error al registrar')
       }
-    } catch (err) {
+    } catch {
       setMessage('Error al registrar')
     }
   }
@@ -108,6 +114,20 @@ function App() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Contraseña"
+              value={regPassword}
+              onChange={(e) => setRegPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Repetir Contraseña"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <button type="submit" className="btn btn-secondary w-100">
               Enviar registro

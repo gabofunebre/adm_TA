@@ -5,6 +5,7 @@ from uuid import uuid4
 from app.database import get_db
 from app import models
 from app.schemas.registration import RegistrationCreate, RegistrationRead
+from app.core.security import get_password_hash
 from app.core.config import get_settings
 from app.services.mailer import send_email
 
@@ -18,6 +19,7 @@ def create_registration(reg_in: RegistrationCreate, db: Session = Depends(get_db
         first_name=reg_in.first_name,
         last_name=reg_in.last_name,
         email=reg_in.email,
+        hashed_password=get_password_hash(reg_in.password),
         admin_token=str(uuid4()),
         user_token=str(uuid4()),
     )
@@ -74,6 +76,7 @@ def confirm_registration(reg_id: int, token: str, db: Session = Depends(get_db))
         email=reg.email,
         first_name=reg.first_name,
         last_name=reg.last_name,
+        hashed_password=reg.hashed_password,
     )
     db.add(user)
     reg.confirmed = True
