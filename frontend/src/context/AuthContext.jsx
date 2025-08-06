@@ -1,0 +1,21 @@
+import { createContext, useContext, useState } from 'react'
+
+const AuthContext = createContext()
+
+export function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  const login = () => setIsAuthenticated(true)
+  const logout = () => setIsAuthenticated(false)
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useAuth() {
+  return useContext(AuthContext)
+}
