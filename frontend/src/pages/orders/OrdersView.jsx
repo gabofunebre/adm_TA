@@ -2,6 +2,7 @@ import { useState } from 'react'
 import OrderCard from '../../components/orders/OrderCard'
 import OrderSearch from '../../components/orders/OrderSearch'
 import OrderForm from '../../components/orders/OrderForm'
+import OrderDetails from '../../components/orders/OrderDetails'
 
 function OrdersView() {
   const initialOrders = [
@@ -65,6 +66,7 @@ function OrdersView() {
   const [search, setSearch] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editingOrder, setEditingOrder] = useState(null)
+  const [selectedOrder, setSelectedOrder] = useState(null)
 
   const filteredOrders = orders.filter((o) => {
     const term = search.toLowerCase()
@@ -84,13 +86,12 @@ function OrdersView() {
     }
   }
 
-  const handleEdit = (order) => {
-    setEditingOrder(order)
-    setShowForm(true)
+  const handleStatusChange = (id, status) => {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)))
   }
 
   return (
-    <div className="container py-4">
+    <div className="container-fluid py-4 px-5">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>Órdenes de trabajo</h2>
         <div>
@@ -113,7 +114,7 @@ function OrdersView() {
           {filteredOrders
             .filter((o) => o.status === 'ingresado')
             .map((o) => (
-              <OrderCard key={o.id} order={o} onClick={() => handleEdit(o)} />
+              <OrderCard key={o.id} order={o} onClick={() => setSelectedOrder(o)} />
             ))}
         </div>
         <div className="col-md-6">
@@ -121,10 +122,30 @@ function OrdersView() {
           {filteredOrders
             .filter((o) => o.status === 'en_proceso')
             .map((o) => (
-              <OrderCard key={o.id} order={o} onClick={() => handleEdit(o)} />
+              <OrderCard key={o.id} order={o} onClick={() => setSelectedOrder(o)} />
             ))}
         </div>
       </div>
+      {selectedOrder && (
+        <OrderDetails
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+          onEdit={() => {
+            setEditingOrder(selectedOrder)
+            setShowForm(true)
+            setSelectedOrder(null)
+          }}
+          onProcess={() => {
+            handleStatusChange(selectedOrder.id, 'en_proceso')
+            setSelectedOrder(null)
+          }}
+          onFinalize={() => {
+            handleStatusChange(selectedOrder.id, 'finalizado')
+            setSelectedOrder(null)
+          }}
+        />
+      )}
+
       {showForm && (
         <OrderForm
           order={editingOrder}
