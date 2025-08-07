@@ -1,72 +1,33 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import OrderCard from '../../components/orders/OrderCard'
 import OrderSearch from '../../components/orders/OrderSearch'
 import OrderForm from '../../components/orders/OrderForm'
 import OrderDetails from '../../components/orders/OrderDetails'
 
 function OrdersView() {
-  const initialOrders = [
-    {
-      id: 1,
-      date: '',
-      client: 'Juan Pérez',
-      phone: '123456',
-      address: 'Calle 1',
-      photo: '',
-      total: '',
-      deposit: '',
-      depositRef: '',
-      preBalance: '',
-      balance: '',
-      seller: '',
-      installer: '',
-      installDate: '',
-      notes: '',
-      status: 'ingresado',
-    },
-    {
-      id: 2,
-      date: '',
-      client: 'María Gómez',
-      phone: '789012',
-      address: 'Calle 2',
-      photo: '',
-      total: '',
-      deposit: '',
-      depositRef: '',
-      preBalance: '',
-      balance: '',
-      seller: '',
-      installer: '',
-      installDate: '',
-      notes: '',
-      status: 'en_proceso',
-    },
-    {
-      id: 3,
-      date: '',
-      client: 'Pedro López',
-      phone: '345678',
-      address: 'Calle 3',
-      photo: '',
-      total: '',
-      deposit: '',
-      depositRef: '',
-      preBalance: '',
-      balance: '',
-      seller: '',
-      installer: '',
-      installDate: '',
-      notes: '',
-      status: 'finalizado',
-    },
-  ]
-
-  const [orders, setOrders] = useState(initialOrders)
+  const [orders, setOrders] = useState([])
   const [search, setSearch] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editingOrder, setEditingOrder] = useState(null)
   const [selectedOrder, setSelectedOrder] = useState(null)
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch('/orders')
+        if (res.ok) {
+          const data = await res.json()
+          setOrders(data)
+        } else {
+          console.error('Failed to fetch orders')
+        }
+      } catch (err) {
+        console.error('Error fetching orders', err)
+      }
+    }
+
+    fetchOrders()
+  }, [])
 
   const filteredOrders = orders.filter((o) => {
     const term = search.toLowerCase()
@@ -77,17 +38,48 @@ function OrdersView() {
     )
   })
 
-  const handleSave = (order) => {
-    if (order.id) {
-      setOrders((prev) => prev.map((o) => (o.id === order.id ? order : o)))
-    } else {
-      order.id = Date.now()
-      setOrders((prev) => [...prev, order])
+  const handleSave = async (order) => {
+    try {
+      const isEditing = Boolean(order.id)
+      const res = await fetch(isEditing ? `/orders/${order.id}` : '/orders', {
+        method: isEditing ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order),
+      })
+      if (res.ok) {
+        const saved = await res.json()
+        setOrders((prev) => {
+          if (isEditing) {
+            return prev.map((o) => (o.id === saved.id ? saved : o))
+          }
+          return [...prev, saved]
+        })
+      } else {
+        console.error('Failed to save order')
+      }
+    } catch (err) {
+      console.error('Error saving order', err)
     }
   }
 
-  const handleStatusChange = (id, status) => {
-    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)))
+  const handleStatusChange = async (id, status) => {
+    const order = orders.find((o) => o.id === id)
+    if (!order) return
+    try {
+      const res = await fetch(`/orders/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...order, status }),
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setOrders((prev) => prev.map((o) => (o.id === id ? updated : o)))
+      } else {
+        console.error('Failed to update order status')
+      }
+    } catch (err) {
+      console.error('Error updating order status', err)
+    }
   }
 
   return (
