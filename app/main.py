@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from app.api.routers import auth, users, accounts, movements, dashboard, registration
+from app.api.routers import auth, users, accounts, movements, dashboard, registration, orders
 from app.database import Base, engine
 from app.services.logging_middleware import LoggingMiddleware
 from pathlib import Path
@@ -18,8 +18,9 @@ app.include_router(accounts.router)
 app.include_router(movements.router)
 app.include_router(dashboard.router)
 app.include_router(registration.router)
+app.include_router(orders.router)
 app.mount(
     "/",
     StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "dist", html=True),
-    name="frontend"
+    name="frontend",
 )
