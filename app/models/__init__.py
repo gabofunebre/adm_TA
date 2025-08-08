@@ -3,3 +3,4 @@ from .account import Account
 from .movement import Movement, MovementType
 from .base import Base
 from .registration import Registration
+from .order import Order, OrderStatus

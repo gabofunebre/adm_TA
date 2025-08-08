@@ -31,10 +31,12 @@ function OrderForm({ order, onClose, onSave }) {
     e.preventDefault()
     if (!window.confirm('¿Guardar la orden?')) return
     setSubmitting(true)
-    await new Promise((res) => setTimeout(res, 500))
-    onSave(form)
-    setSubmitting(false)
-    onClose()
+    try {
+      await onSave(form)
+      onClose()
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (

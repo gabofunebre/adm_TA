@@ -9,13 +9,13 @@ def send_email(to: str, subject: str, body: str, from_address: str | None = None
         'to': to,
         'subject': subject,
         'body': body,
-        'from': from_address or settings.mailer_from,
+        'from': from_address or settings.MAILER_FROM,
     }
     headers = {
-        'Authorization': f'Bearer {settings.mailer_token}',
+        'Authorization': f'Bearer {settings.MAILER_TOKEN}',
         'Content-Type': 'application/json',
     }
     try:
-        requests.post(settings.mailer_url, json=payload, headers=headers, timeout=5)
+        requests.post(settings.MAILER_URL, json=payload, headers=headers, timeout=5)
     except Exception as exc:
         print(f'Error sending email: {exc}')

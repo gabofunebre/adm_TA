@@ -27,13 +27,13 @@ def create_registration(reg_in: RegistrationCreate, db: Session = Depends(get_db
     db.commit()
     db.refresh(reg)
 
-    approve_link = f"{settings.base_url}/registrations/{reg.id}/approve?token={reg.admin_token}"
-    reject_link = f"{settings.base_url}/registrations/{reg.id}/reject?token={reg.admin_token}"
+    approve_link = f"{settings.BASE_URL}/registrations/{reg.id}/approve?token={reg.admin_token}"
+    reject_link = f"{settings.BASE_URL}/registrations/{reg.id}/reject?token={reg.admin_token}"
     body = (
         f"<p>Nuevo registro de {reg.first_name} {reg.last_name} ({reg.email}).</p>"
         f"<p><a href='{approve_link}'>Aprobar</a> | <a href='{reject_link}'>Rechazar</a></p>"
     )
-    send_email(settings.admin_email, "Nuevo registro", body)
+    send_email(settings.ADMIN_EMAIL, "Nuevo registro", body)
     return reg
 
 
@@ -44,7 +44,7 @@ def approve_registration(reg_id: int, token: str, db: Session = Depends(get_db))
         raise HTTPException(status_code=404, detail="Invalid registration")
     reg.approved = True
     db.commit()
-    confirm_link = f"{settings.base_url}/registrations/{reg.id}/confirm?token={reg.user_token}"
+    confirm_link = f"{settings.BASE_URL}/registrations/{reg.id}/confirm?token={reg.user_token}"
     body = (
         f"<p>Su registro fue aprobado.</p>"
         f"<p><a href='{confirm_link}'>Confirmar cuenta</a></p>"
