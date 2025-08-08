@@ -56,6 +56,7 @@ function AuthPage() {
     }
     setMessage('')
     try {
+
       const res = await fetch('/users/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,6 +73,7 @@ function AuthPage() {
         setPage('login')
       } else {
         setMessage('No se pudo crear la cuenta')
+
       }
     } catch {
       setMessage('Error de conexión')
