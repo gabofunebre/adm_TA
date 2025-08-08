@@ -19,18 +19,32 @@ function AuthPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!username || !password) {
       setError('Completa todos los campos')
       return
     }
     setError('')
-    login()
-    navigate('/welcome')
+    try {
+      const res = await fetch('/auth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ username, password }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        login(data.access_token)
+        navigate('/welcome')
+      } else {
+        setError('Usuario o contraseña incorrectos')
+      }
+    } catch {
+      setError('Error de conexión')
+    }
   }
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault()
     if (!firstName || !lastName || !email || !regPassword || !confirmPassword) {
       setMessage('Completa todos los campos')
@@ -41,8 +55,26 @@ function AuthPage() {
       return
     }
     setMessage('')
-    login()
-    navigate('/welcome')
+    try {
+      const res = await fetch('/registrations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          password: regPassword,
+        }),
+      })
+      if (res.ok) {
+        setMessage('Registro enviado, verifica tu correo')
+        setPage('login')
+      } else {
+        setMessage('No se pudo enviar el registro')
+      }
+    } catch {
+      setMessage('Error de conexión')
+    }
   }
 
   return (

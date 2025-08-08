@@ -3,6 +3,7 @@ import OrderCard from '../../components/orders/OrderCard'
 import OrderSearch from '../../components/orders/OrderSearch'
 import OrderForm from '../../components/orders/OrderForm'
 import OrderDetails from '../../components/orders/OrderDetails'
+import { useAuth } from '../../context/AuthContext'
 
 function OrdersView() {
   const [orders, setOrders] = useState([])
@@ -10,11 +11,14 @@ function OrdersView() {
   const [showForm, setShowForm] = useState(false)
   const [editingOrder, setEditingOrder] = useState(null)
   const [selectedOrder, setSelectedOrder] = useState(null)
+  const { token } = useAuth()
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch('/orders')
+        const res = await fetch('/orders', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         if (res.ok) {
           const data = await res.json()
           setOrders(data)
@@ -26,8 +30,8 @@ function OrdersView() {
       }
     }
 
-    fetchOrders()
-  }, [])
+    if (token) fetchOrders()
+  }, [token])
 
   const filteredOrders = orders.filter((o) => {
     const term = search.toLowerCase()
@@ -43,7 +47,10 @@ function OrdersView() {
       const isEditing = Boolean(order.id)
       const res = await fetch(isEditing ? `/orders/${order.id}` : '/orders', {
         method: isEditing ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(order),
       })
       if (res.ok) {
@@ -68,7 +75,10 @@ function OrdersView() {
     try {
       const res = await fetch(`/orders/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ ...order, status }),
       })
       if (res.ok) {
