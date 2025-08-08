@@ -4,6 +4,7 @@ from app.api.routers import auth, users, accounts, movements, dashboard, registr
 from app.database import Base, engine
 from app.services.logging_middleware import LoggingMiddleware
 from pathlib import Path
+import app.models
 
 Base.metadata.create_all(bind=engine)
 
