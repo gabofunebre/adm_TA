@@ -56,21 +56,24 @@ function AuthPage() {
     }
     setMessage('')
     try {
-      const res = await fetch('/registrations', {
+
+      const res = await fetch('/users/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          username: email,
+          password: regPassword,
           first_name: firstName,
           last_name: lastName,
           email,
-          password: regPassword,
         }),
       })
       if (res.ok) {
-        setMessage('Registro enviado, verifica tu correo')
+        setMessage('Cuenta creada, ahora puedes iniciar sesión')
         setPage('login')
       } else {
-        setMessage('No se pudo enviar el registro')
+        setMessage('No se pudo crear la cuenta')
+
       }
     } catch {
       setMessage('Error de conexión')
