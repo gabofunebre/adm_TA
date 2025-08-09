@@ -10,3 +10,4 @@ python-multipart
 requests
 pydantic[email]
 itsdangerous
+jinja2
