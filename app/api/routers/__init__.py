@@ -1,3 +1,3 @@
-from . import auth, registration
+from . import auth, registration, pages
 
-__all__ = ["auth", "registration"]
+__all__ = ["auth", "registration", "pages"]
