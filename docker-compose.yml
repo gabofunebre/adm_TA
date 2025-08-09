@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: db_mov-dinero
+    container_name: db_TA
     image: postgres:17
     env_file:
       - .env
@@ -9,26 +9,18 @@ services:
     ports:
       - "6432:5432"
     networks:
-      - movdin_net
-  web:
-    container_name: app_mov-dinero
+      - net_TA
+  adm:
+    container_name: adm_TA
     build: .
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
-      - ./frontend/dist:/app/frontend/dist
     env_file:
       - .env
     depends_on:
       - db
     networks:
-      - movdin_net
-      - nginx_net
-      - mailer_net
+      - net_TA
 networks:
-  movdin_net:
-  nginx_net:
-    external: true
-  mailer_net:
-    external: true
-
+  net_TA:
