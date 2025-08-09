@@ -2,7 +2,7 @@ __pycache__/
 *.py[cod]
 *.env
 .env
-
+postgres_data/
 # Node
 node_modules
 
