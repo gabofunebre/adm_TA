@@ -4,12 +4,16 @@ services:
     image: postgres:17
     env_file:
       - .env
+    # opcional pero prolijo: fija el subdir de data
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - ${DB_PATH}:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
     ports:
-      - "6432:5432"
+      - "6432:5432"   # dejalo si necesitás acceder desde el host
     networks:
       - net_TA
+
   adm:
     container_name: adm_TA
     build: .
@@ -22,5 +26,12 @@ services:
       - db
     networks:
       - net_TA
+      - nginx_net
+
 networks:
   net_TA:
+    external: true
+    name: net_TA
+  nginx_net:
+    external: true
+    name: nginx_net
