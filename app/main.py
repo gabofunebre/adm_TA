@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -30,6 +31,13 @@ with SessionLocal() as db:
         db.commit()
 
 app = FastAPI(title="adm_TA")
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    """Redirect base path to interactive API docs."""
+    return RedirectResponse("/docs")
+
 
 app.add_middleware(LoggingMiddleware)
 app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET_KEY)
