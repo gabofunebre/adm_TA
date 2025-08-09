@@ -1,5 +1,8 @@
 from fastapi import FastAPI
-from app.api.routers import auth, registration
+from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
+
+from app.api.routers import auth, registration, pages
 from app.database import Base, engine, SessionLocal
 from app.services.logging_middleware import LoggingMiddleware
 import app.models
@@ -29,6 +32,10 @@ with SessionLocal() as db:
 app = FastAPI(title="adm_TA")
 
 app.add_middleware(LoggingMiddleware)
+app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET_KEY)
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(auth.router)
 app.include_router(registration.router)
+app.include_router(pages.router)
